@@ -6,7 +6,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.timezone import now
 from accounts import emails
-from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm
+from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm, \
+    ResponseCodes
 
 
 @login_required
@@ -69,25 +70,45 @@ def create_release(request):
         else:
             return HttpResponseBadRequest()
 
-    return  HttpResponseNotAllowed(["POST"])
+    return HttpResponseNotAllowed(["POST"])
 
 
 @login_required
 def release(request, id):
     r = Release.objects.get(id=id)
-    return render_to_response("release.html", {
+    userResponse = r.user_response_object(request.user)
+    return render_to_response("release.html",  RequestContext(request, {
         "title": r.project.name+", "+r.number,
         "release": r,
-    })
-
-@login_required
-def respond(request, id):
-    r = Response.objects.get(id=id)
-    # if response.user is not request.user:
-    #     return render_to_response("bad_login.html")
-    return render_to_response('respond.html', RequestContext(request, {
-        "title": "Response for "+r.release.project.name+" release v"+r.release.number,
-        "response": r,
-        "acceptForm": AcceptResponseForm(instance=r),
-        "rejectForm": RejectResponseForm(instance=r)
+        "userResponse": userResponse,
+        "acceptForm": AcceptResponseForm(instance=userResponse),
+        "rejectForm": RejectResponseForm(instance=userResponse)
     }))
+
+
+def accept_release(request):
+    if request.POST:
+        form = AcceptResponseForm(request.POST)
+        if form.is_valid():
+            response = form.save(commit=False)
+            response.response = ResponseCodes.Accept
+            response.save()
+            return HttpResponseRedirect("/release/"+str(response.release.id)+"/")
+        else:
+            return HttpResponseBadRequest()
+
+    return HttpResponseNotAllowed(["POST"])
+
+
+def reject_release(request):
+    if request.POST:
+        form = RejectResponseForm(request.POST)
+        if form.is_valid():
+            response = form.save(commit=False)
+            response.response = ResponseCodes.Reject
+            response.save()
+            return HttpResponseRedirect("/release/"+str(response.release.id)+"/")
+        else:
+            return HttpResponseBadRequest()
+
+    return HttpResponseNotAllowed(["POST"])

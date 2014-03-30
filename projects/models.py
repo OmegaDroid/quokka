@@ -1,3 +1,4 @@
+from django import forms
 from django.db import models
 from django.forms import ModelForm
 from parsley.decorators import parsleyfy
@@ -63,6 +64,10 @@ class Release(models.Model):
     def __str__(self):
         return self.number
 
+    def user_response_object(self, user):
+        return Response.objects.filter(release=self).get(user=user)
+
+
 @parsleyfy
 class ReleaseForm(ModelForm):
     class Meta:
@@ -82,24 +87,41 @@ class Response(models.Model):
     ), default=0)
 
     release = models.ForeignKey(Release)
-    reason = models.TextField(null=True)
+    reason = models.TextField(null=True, blank=True)
     user = models.ForeignKey(UserProfile)
+
+    class Meta:
+        unique_together = (("release", "user"),)
 
 @parsleyfy
 class AcceptResponseForm(ModelForm):
     message = "Accept the release?"
     class Meta:
         model = Response
-        exclude = ["response", "reason", "user", "release"]
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['response'].widget = forms.HiddenInput()
+        self.fields['user'].widget = forms.HiddenInput()
+        self.fields['release'].widget = forms.HiddenInput()
+        self.fields['reason'].widget = forms.HiddenInput()
+
 
 @parsleyfy
 class RejectResponseForm(ModelForm):
     class Meta:
         model = Response
-        exclude = ["response", "user", "release"]
+        exclude = []
 
         parsley_extras = {
             "reason": {
                 "required": True
             }
         }
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['response'].widget = forms.HiddenInput()
+    #     self.fields['user'].widget = forms.HiddenInput()
+    #     self.fields['release'].widget = forms.HiddenInput()

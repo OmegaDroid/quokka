@@ -16,6 +16,9 @@
 				            {{ field.errors }}
 						</div>
 					{% endfor %}
+					{% for field in form.hidden_fields %}
+						{{ field }}
+					{% endfor %}
 				</div>
 				<div class="modal-footer">
 	                <input type='submit' value='Submit' class='btn btn-default pull-right' />

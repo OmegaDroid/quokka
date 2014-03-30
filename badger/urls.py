@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'^project/(\d+)/$', 'projects.views.project'),
     url(r'^create_release/$', 'projects.views.create_release'),
     url(r'^release/(\d+)/$', 'projects.views.release'),
-    url(r'^respond/(\d+)/$', 'projects.views.respond')
+    url(r'^accept_release/$', 'projects.views.accept_release'),
+    url(r'^reject_release/$', 'projects.views.reject_release')
 )
