@@ -69,13 +69,37 @@ class ReleaseForm(ModelForm):
         model = Release
         exclude = ['dateTime']
 
+class ResponseCodes():
+    Pending = 0
+    Accept = 1
+    Reject = 2
+
 class Response(models.Model):
     response = models.IntegerField(choices=(
-        (0, "Pending"),
-        (1, "Accept"),
-        (2, "Reject"),
+        (ResponseCodes.Pending, "Pending"),
+        (ResponseCodes.Accept, "Accept"),
+        (ResponseCodes.Reject, "Reject"),
     ), default=0)
 
     release = models.ForeignKey(Release)
     reason = models.TextField(null=True)
     user = models.ForeignKey(UserProfile)
+
+@parsleyfy
+class AcceptResponseForm(ModelForm):
+    message = "Accept the release?"
+    class Meta:
+        model = Response
+        exclude = ["response", "reason", "user", "release"]
+
+@parsleyfy
+class RejectResponseForm(ModelForm):
+    class Meta:
+        model = Response
+        exclude = ["response", "user", "release"]
+
+        parsley_extras = {
+            "reason": {
+                "required": True
+            }
+        }

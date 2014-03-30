@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
@@ -5,9 +6,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.timezone import now
 from accounts import emails
-from projects.models import ProjectForm, Project, ReleaseForm, Release, Response
+from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm
 
 
+@login_required
 def projects(request):
     return render_to_response("projects.html", RequestContext(request, {
         "title": "Projects",
@@ -16,6 +18,8 @@ def projects(request):
         "formAction": "/create_project/"
     }))
 
+
+@login_required
 def create_project(request):
     if request.POST:
         form = ProjectForm(request.POST)
@@ -28,6 +32,7 @@ def create_project(request):
     return  HttpResponseNotAllowed(['POST'])
 
 
+@login_required
 def project(request, id):
     p = Project.objects.get(id=id)
     form = ReleaseForm(initial={'project':p})
@@ -50,6 +55,7 @@ def create_responses(hostname, elem):
         create_response(hostname, elem, auth)
 
 
+@login_required
 def create_release(request):
     if request.POST:
         form = ReleaseForm(request.POST)
@@ -57,18 +63,31 @@ def create_release(request):
             release = form.save(commit=False)
             release.dateTime = now()
             release.save()
-            create_responses(request.META['HTTP_HOST'], release)
-            emails.new_release_team(request.META['HTTP_HOST'], release)
+            create_responses(request.META["HTTP_HOST"], release)
+            emails.new_release_team(request.META["HTTP_HOST"], release)
             return HttpResponseRedirect("/release/"+str(release.id)+"/")
         else:
             return HttpResponseBadRequest()
 
-    return  HttpResponseNotAllowed(['POST'])
+    return  HttpResponseNotAllowed(["POST"])
 
 
+@login_required
 def release(request, id):
     r = Release.objects.get(id=id)
     return render_to_response("release.html", {
         "title": r.project.name+", "+r.number,
         "release": r,
     })
+
+@login_required
+def respond(request, id):
+    r = Response.objects.get(id=id)
+    # if response.user is not request.user:
+    #     return render_to_response("bad_login.html")
+    return render_to_response('respond.html', RequestContext(request, {
+        "title": "Response for "+r.release.project.name+" release v"+r.release.number,
+        "response": r,
+        "acceptForm": AcceptResponseForm(instance=r),
+        "rejectForm": RejectResponseForm(instance=r)
+    }))

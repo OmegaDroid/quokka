@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block MainContent %}
+	<div>
+		<h2>Release Notes</h2>
+		<p>{{ response.release.notes }}</p>
+	</div>
+	<div class="row pull-right">
+		<button class="pull-right btn btn-success" data-toggle="modal" data-target="#accept_overlay"><span class="glyphicon glyphicon-ok"></span> Accept</button>
+		{% include "form_overlay.html" with overlayId="accept_overlay" form=acceptForm %}
+
+		<button style="margin-right: 5px;" class="pull-right btn btn-danger" data-toggle="modal" data-target="#decline_overlay"><span class="glyphicon glyphicon-remove"></span> Decline</button>
+		{% include "form_overlay.html" with overlayId="decline_overlay" form=rejectForm %}
+	</div>
+{% endblock %}

@@ -41,12 +41,13 @@
 							</ul>
 						</div>
 					</li>
+					<li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
 
-	<div class="container" style="padding: 40px 15px;">
+	<div class="container" style="padding: 50px 15px;">
 		{% if title %}<h1>{{ title }}</h1>{% endif %}
 
 		{% block MainContent %}{% endblock %}
