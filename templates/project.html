@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load utils %}
+
+{% block MainContent %}
+	<div>
+	<style>
+		.img-thumbnail
+		{
+			width:100px;
+			height:100px;
+			margin:5px
+		}
+	</style>
+	<div class="img_desc">
+		<table>
+			<tr>
+				<td>
+					{{ project|img_tag:"img-thumbnail" }}
+				</td>
+				<td>
+					{{ project.description }}
+				</td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td><strong>Team:</strong></td>
+				<td>{% if project.team %}<a href="#">{{ project.team.name }}</a>{% endif %}</td>
+			</tr>
+			<tr>
+				<td><strong>Team Leader:</strong></td>
+				<td>{% if project.team %}<a href="#">{{ project.team.leader.name }}</a>{% endif %}</td>
+			</tr>
+			<tr>
+				<td><strong>Authorisers:</strong></td>
+				<td>
+					<table>
+						{% for auth in project.authorisers.all %}
+							<tr><td><a href="#">{{ auth.name }}</a></td></tr>
+						{% endfor %}
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td><strong>Current Releases:</strong></td>
+				<td>
+					<table>
+						{% for release in project.latest %}
+							<tr>
+								{% if release.tag %}
+								<td>
+									<a href="#">{{ release.tag }}</a>
+								</td>
+								{% endif %}
+								<td>
+									<a href="/release/{{ release.release.id }}/">{{ release.release }}</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+		$(document).ready(function()
+		{
+			$("#show").click(function()
+			{
+				notes = $("#notes");
+				hidden = notes.hasClass("hide");
+				if(hidden)
+				{
+					notes.removeClass("hide");
+					$(this).attr("value", "Hide");
+				}
+				else
+				{
+					notes.addClass("hide");
+					$(this).attr("value", "Show");
+				}
+			});
+		});
+	</script>
+	<h2>Release Notes <input class="btn btn-default" id="show" value="Show"/> </h2>
+	<div id="notes" class="hide">
+		{% for release in project.releases %}
+			<h3>{{ release.number }}</h3>
+			<p>{{ release.notes }}</p>
+		{% endfor %}
+	</div>
+	</div>
+
+	<button class="pull-right btn btn-default" data-toggle="modal" data-target="#create_overlay"><span class="glyphicon glyphicon-plus"></span> New Release</button>
+
+	{% include "form_overlay.html" %}
+{% endblock %}
