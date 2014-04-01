@@ -122,7 +122,12 @@ def reject_release(request, id):
 @login_required
 def team(request, id):
     t = Team.objects.get(id=id)
-    return render_to_response("team.html", {"title": t.name, "team": t})
+    return render_to_response("team.html", RequestContext(request,{
+        "title": t.name,
+        "team": t,
+        "formAction": "/edit_team/"+str(id)+"/",
+        "form": TeamForm(instance=t)
+    }))
 
 
 @login_required
@@ -140,6 +145,18 @@ def create_team(request):
         if form.is_valid():
             elem = form.save()
             return HttpResponseRedirect(object_link(elem))
+        else:
+            return HttpResponseBadRequest()
+
+    return  HttpResponseNotAllowed(['POST'])
+
+def edit_team(request, id):
+    if request.POST:
+        t = Team.objects.get(id=id)
+        form = TeamForm(request.POST, instance=t)
+        if form.is_valid():
+            t = form.save()
+            return HttpResponseRedirect(object_link(t))
         else:
             return HttpResponseBadRequest()
 

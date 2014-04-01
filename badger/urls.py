@@ -22,4 +22,5 @@ urlpatterns = patterns('',
     url(r'^teams/$', 'projects.views.teams'),
     url(r'^team/(\d+)/$', 'projects.views.team'),
     url(r'^create_team/$', 'projects.views.create_team'),
+    url(r'^edit_team/(\d+)/$', 'projects.views.edit_team'),
 )
