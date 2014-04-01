@@ -3,6 +3,7 @@
 
 {% block MainContent %}
 	<div>
+		{# Banner stating if the release was accepted or rejected #}
 		{% if not release.pending %}
 			{% if release.accepted %}
 				<div class="alert alert-success">
@@ -22,6 +23,15 @@
 				</div>
 			{% endif %}
 		{% endif %}
+
+		{# Add the pending/accepted/rejected table #}
+		<table>
+			<tr><td>{{ release.pending_responses.count }} Pending</td></tr>
+			<tr><td>{{ release.accepted_responses.count }} Accepted</td></tr>
+			<tr><td>{{ release.rejected_responses.count }} Rejected</td></tr>
+		</table>
+
+		{# Add the release notes since the last accepted build #}
 		<div class="page-header">
 		  <h1>Release Notes <small>Since the last accepted build</small></h1>
 		</div>
@@ -35,15 +45,18 @@
 			        {{ r.notes }}
 			    </div>
 			{% endfor %}
-	</div>
-	{% if userResponse %}
-	<div class="row pull-right">
-		<button class="pull-right btn btn-success" data-toggle="modal" data-target="#accept_overlay"><span class="glyphicon glyphicon-ok"></span> Accept</button>
-		{% include "form_overlay.html" with overlayId="accept_overlay" form=acceptForm formAction="/accept_release/"|concat:release.id|concat:"/"  %}
+		</div>
 
-		<button style="margin-right: 5px;" class="pull-right btn btn-danger" data-toggle="modal" data-target="#decline_overlay"><span class="glyphicon glyphicon-remove"></span> Decline</button>
-		{% include "form_overlay.html" with overlayId="decline_overlay" form=rejectForm formAction="/reject_release/"|concat:release.id|concat:"/"  %}
+		{# Add the accept/reject buttons and forms #}
+		{% if userResponse %}
+			<div class="row pull-right">
+				<button class="pull-right btn btn-success" data-toggle="modal" data-target="#accept_overlay"><span class="glyphicon glyphicon-ok"></span> Accept</button>
+				{% include "form_overlay.html" with overlayId="accept_overlay" form=acceptForm formAction="/accept_release/"|concat:release.id|concat:"/"  %}
 
+				<button style="margin-right: 5px;" class="pull-right btn btn-danger" data-toggle="modal" data-target="#decline_overlay"><span class="glyphicon glyphicon-remove"></span> Decline</button>
+				{% include "form_overlay.html" with overlayId="decline_overlay" form=rejectForm formAction="/reject_release/"|concat:release.id|concat:"/"  %}
+
+			</div>
+		{% endif %}
 	</div>
-	{% endif %}
 {% endblock %}
