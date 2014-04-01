@@ -9,3 +9,10 @@ def img_tag(obj, cls=""):
         if obj.img:
             return mark_safe("<img class='"+cls+"' src='"+obj.img.url+"'/>")
     return mark_safe("<span class='glyphicon glyphicon-picture "+cls+"'></span>")
+
+@register.filter
+def concat(obj, other):
+    try:
+        return str(obj)+str(other)
+    except:
+        return ""

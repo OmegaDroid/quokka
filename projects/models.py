@@ -1,4 +1,3 @@
-from django import forms
 from django.db import models
 from django.forms import ModelForm
 from parsley.decorators import parsleyfy
@@ -64,8 +63,48 @@ class Release(models.Model):
     def __str__(self):
         return self.number
 
-    def user_response_object(self, user):
-        return Response.objects.filter(release=self).get(user=user)
+    def active_user_response_object(self, user):
+        responses = Response.objects.filter(release=self, response=ResponseCodes.Pending)
+        if responses:
+            return responses.get(user=user)
+        return None
+
+    @property
+    def responses(self):
+        return Response.objects.filter(release=self)
+
+    @property
+    def pending_responses(self):
+        return Response.objects.filter(release=self, response=ResponseCodes.Pending)
+
+    @property
+    def accepted_responses(self):
+        return Response.objects.filter(release=self, response=ResponseCodes.Accept)
+
+    @property
+    def rejected_responses(self):
+        return Response.objects.filter(release=self, response=ResponseCodes.Reject)
+
+    @property
+    def pending(self):
+        return self.pending_responses and not self.rejected
+
+    @property
+    def accepted(self):
+        return len(self.accepted_responses) == len(self.responses)
+
+    @property
+    def rejected(self):
+        return len(self.rejected_responses) > 0
+
+    @property
+    def since_last_accepted(self):
+        releases = [self]
+        for release in Release.objects.filter(id__lt=self.id).order_by("-id"):
+            if release.accepted:
+                return releases
+            else:
+                releases.append(release)
 
 
 @parsleyfy
@@ -98,30 +137,16 @@ class AcceptResponseForm(ModelForm):
     message = "Accept the release?"
     class Meta:
         model = Response
-        exclude = []
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['response'].widget = forms.HiddenInput()
-        self.fields['user'].widget = forms.HiddenInput()
-        self.fields['release'].widget = forms.HiddenInput()
-        self.fields['reason'].widget = forms.HiddenInput()
-
+        exclude = ['reason', 'response', 'release', 'user']
 
 @parsleyfy
 class RejectResponseForm(ModelForm):
     class Meta:
         model = Response
-        exclude = []
+        exclude = ['response', 'release', 'user']
 
         parsley_extras = {
             "reason": {
                 "required": True
             }
         }
-    #
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['response'].widget = forms.HiddenInput()
-    #     self.fields['user'].widget = forms.HiddenInput()
-    #     self.fields['release'].widget = forms.HiddenInput()

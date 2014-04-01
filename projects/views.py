@@ -76,7 +76,7 @@ def create_release(request):
 @login_required
 def release(request, id):
     r = Release.objects.get(id=id)
-    userResponse = r.user_response_object(request.user)
+    userResponse = r.active_user_response_object(request.user)
     return render_to_response("release.html",  RequestContext(request, {
         "title": r.project.name+", "+r.number,
         "release": r,
@@ -86,9 +86,11 @@ def release(request, id):
     }))
 
 
-def accept_release(request):
+def accept_release(request, id):
     if request.POST:
-        form = AcceptResponseForm(request.POST)
+        response = Release.objects.get(id=id).active_user_response_object(request.user)
+
+        form = AcceptResponseForm(request.POST, instance=response)
         if form.is_valid():
             response = form.save(commit=False)
             response.response = ResponseCodes.Accept
@@ -100,9 +102,11 @@ def accept_release(request):
     return HttpResponseNotAllowed(["POST"])
 
 
-def reject_release(request):
+def reject_release(request, id):
     if request.POST:
-        form = RejectResponseForm(request.POST)
+        response = Release.objects.get(id=id).active_user_response_object(request.user)
+
+        form = RejectResponseForm(request.POST, instance=response)
         if form.is_valid():
             response = form.save(commit=False)
             response.response = ResponseCodes.Reject

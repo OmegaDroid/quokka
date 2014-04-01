@@ -1,17 +1,49 @@
 {% extends "base.html" %}
+{% load utils %}
 
 {% block MainContent %}
 	<div>
-		<h2>Release Notes</h2>
-		<p>{{ release.notes }}</p>
+		{% if not release.pending %}
+			{% if release.accepted %}
+				<div class="alert alert-success">
+					<h1><span class="glyphicon glyphicon-ok"></span> Build Accepted</h1>
+				</div>
+			{% else %}
+				<div class="alert alert-danger">
+					<h1><span class="glyphicon glyphicon-remove"></span> Build Rejected</h1>
+					<table>
+						{% for response in release.rejected_responses %}
+						<tr>
+							<tr><b>{{ response.user }}: </b></tr>
+							<tr>{{ response.reason }}</tr>
+						</tr>
+						{% endfor %}
+					</table>
+				</div>
+			{% endif %}
+		{% endif %}
+		<div class="page-header">
+		  <h1>Release Notes <small>Since the last accepted build</small></h1>
+		</div>
+
+		<div class="panel panel-default">
+			{% for r in release.since_last_accepted %}
+				<div class="panel-heading">
+				    <h3 class="panel-title">{{ r.number }}</h3>
+			    </div>
+			    <div class="panel-body">
+			        {{ r.notes }}
+			    </div>
+			{% endfor %}
 	</div>
 	{% if userResponse %}
 	<div class="row pull-right">
 		<button class="pull-right btn btn-success" data-toggle="modal" data-target="#accept_overlay"><span class="glyphicon glyphicon-ok"></span> Accept</button>
-		{% include "form_overlay.html" with overlayId="accept_overlay" form=acceptForm formAction="/accept_release/" %}
+		{% include "form_overlay.html" with overlayId="accept_overlay" form=acceptForm formAction="/accept_release/"|concat:release.id|concat:"/"  %}
 
 		<button style="margin-right: 5px;" class="pull-right btn btn-danger" data-toggle="modal" data-target="#decline_overlay"><span class="glyphicon glyphicon-remove"></span> Decline</button>
-		{% include "form_overlay.html" with overlayId="decline_overlay" form=rejectForm formAction="/reject_release/" %}
+		{% include "form_overlay.html" with overlayId="decline_overlay" form=rejectForm formAction="/reject_release/"|concat:release.id|concat:"/"  %}
+
 	</div>
 	{% endif %}
 {% endblock %}
