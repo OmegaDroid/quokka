@@ -1,5 +1,44 @@
 {% extends "base.html" %}
+{% load utils %}
 
 {% block MainContent %}
+	<style>
+		.img-thumbnail
+		{
+			width:100px;
+			height:100px;
+			margin:5px
+		}
+	</style>
+	<div class="img_desc">
+		<table>
+			<tr>
+				<td>
+					{{ team|img_tag:"img-thumbnail" }}
+				</td>
+				<td>
+					{{ team.description }}
+				</td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td><strong>Team Leader:</strong></td>
+				<td><a href="{{ team.leader|object_link }}">{{ team.leader }}</a></td>
+			</tr>
+			<tr>
+				<td><strong>Members:</strong></td>
+				<td>
+					<table>
+						{% for member in team.members.all %}
+							<tr><td><a href="{{ member|object_link }}">{{ member }}</a></td></tr>
+						{% endfor %}
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
 
+	<h2>Projects</h2>
+	{% include "projects_table.html" with projects=team.projects %}
 {% endblock %}

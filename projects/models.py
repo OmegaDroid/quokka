@@ -21,6 +21,10 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def projects(self):
+        return Project.objects.filter(team=self)
+
 class TeamForm(ModelForm):
     class Meta:
         model = Team

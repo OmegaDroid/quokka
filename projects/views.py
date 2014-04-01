@@ -120,8 +120,9 @@ def reject_release(request, id):
 
 
 @login_required
-def team(request, p1):
-    return render_to_response("team.html")
+def team(request, id):
+    t = Team.objects.get(id=id)
+    return render_to_response("team.html", {"title": t.name, "team": t})
 
 
 @login_required
