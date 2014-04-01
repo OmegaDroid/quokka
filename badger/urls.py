@@ -19,5 +19,7 @@ urlpatterns = patterns('',
     url(r'^release/(\d+)/$', 'projects.views.release'),
     url(r'^accept_release/(\d+)/$', 'projects.views.accept_release'),
     url(r'^reject_release/(\d+)/$', 'projects.views.reject_release'),
+    url(r'^teams/$', 'projects.views.teams'),
     url(r'^team/(\d+)/$', 'projects.views.team'),
+    url(r'^create_team/$', 'projects.views.create_team'),
 )

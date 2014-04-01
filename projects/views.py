@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 # Create your views here.
@@ -7,7 +7,8 @@ from django.template import RequestContext
 from django.utils.timezone import now
 from accounts import emails
 from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm, \
-    ResponseCodes
+    ResponseCodes, Team, TeamForm
+from utils.templatetags.utils import object_link
 
 
 @login_required
@@ -26,7 +27,7 @@ def create_project(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             elem = form.save()
-            return HttpResponseRedirect("/project/"+str(elem.id)+"/")
+            return HttpResponseRedirect(object_link(elem))
         else:
             return HttpResponseBadRequest()
 
@@ -66,7 +67,7 @@ def create_release(request):
             release.save()
             create_responses(request.META["HTTP_HOST"], release)
             emails.new_release_team(request.META["HTTP_HOST"], release)
-            return HttpResponseRedirect("/release/"+str(release.id)+"/")
+            return HttpResponseRedirect(object_link(release))
         else:
             return HttpResponseBadRequest()
 
@@ -95,7 +96,7 @@ def accept_release(request, id):
             response = form.save(commit=False)
             response.response = ResponseCodes.Accept
             response.save()
-            return HttpResponseRedirect("/release/"+str(response.release.id)+"/")
+            return HttpResponseRedirect(object_link(response.release))
         else:
             return HttpResponseBadRequest()
 
@@ -118,5 +119,27 @@ def reject_release(request, id):
     return HttpResponseNotAllowed(["POST"])
 
 
+@login_required
 def team(request, p1):
     return render_to_response("team.html")
+
+
+@login_required
+def teams(request):
+    return render_to_response('teams.html', RequestContext(request,{
+        "title": "Teams",
+        "teams": Team.objects.all(),
+        "form": TeamForm(initial={"leader": request.user}),
+        "formAction": "/create_team/"
+    }))
+
+def create_team(request):
+    if request.POST:
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            elem = form.save()
+            return HttpResponseRedirect(object_link(elem))
+        else:
+            return HttpResponseBadRequest()
+
+    return  HttpResponseNotAllowed(['POST'])

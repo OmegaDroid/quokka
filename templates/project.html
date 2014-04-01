@@ -29,14 +29,14 @@
 			</tr>
 			<tr>
 				<td><strong>Team Leader:</strong></td>
-				<td>{% if project.team %}<a href="{{ project.team.leader|object_link }}">{{ project.team.leader.name }}</a>{% endif %}</td>
+				<td>{% if project.team %}<a href="{{ project.team.leader|object_link }}">{{ project.team.leader }}</a>{% endif %}</td>
 			</tr>
 			<tr>
 				<td><strong>Authorisers:</strong></td>
 				<td>
 					<table>
 						{% for auth in project.authorisers.all %}
-							<tr><td><a href="{{ auth|object_link }}">{{ auth.name }}</a></td></tr>
+							<tr><td><a href="{{ auth|object_link }}">{{ auth }}</a></td></tr>
 						{% endfor %}
 					</table>
 				</td>

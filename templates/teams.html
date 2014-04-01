@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load utils %}
+
+{% block MainContent %}
+	<table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+		        <td></td>
+		        <td>Name</td>
+		        <td>Leader</td>
+	        </tr>
+        </thead>
+		<tbody>
+		{% for team in teams %}
+			<td>
+				{{ team|img_tag:"img-rounded" }}
+			</td>
+			<td>
+				<a href="{{ team|object_link }}">{{ team.name }}</a>
+			</td>
+			<td>
+				{% if project.latest %}
+					<a href="{{ team.leader|object_link }}">{{ team.leader }}</a>
+				{% endif %}
+			</td>
+		{% endfor %}
+		</tbody>
+	</table>
+
+	<button class="pull-right btn btn-default" data-toggle="modal" data-target="#form_overlay"><span class="glyphicon glyphicon-plus"></span> Create</button>
+	{% include "form_overlay.html" %}
+{% endblock %}
