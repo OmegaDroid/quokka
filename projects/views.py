@@ -116,3 +116,7 @@ def reject_release(request, id):
             return HttpResponseBadRequest()
 
     return HttpResponseNotAllowed(["POST"])
+
+
+def team(request, p1):
+    return render_to_response("team.html")

@@ -16,3 +16,10 @@ def concat(obj, other):
         return str(obj)+str(other)
     except:
         return ""
+
+@register.filter
+def object_link(obj):
+    try:
+        return ("/"+type(obj).__name__+"/"+str(obj.id)+"/").lower()
+    except:
+        return ""

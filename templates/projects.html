@@ -19,18 +19,18 @@
 					{{ project|img_tag:"img-rounded" }}
 				</td>
 				<td>
-					<a href="/project/{{ project.id }}/">{{ project.name }}</a>
+					<a href="{{ project|object_link }}">{{ project.name }}</a>
 				</td>
 				<td>
 					{% if project.latest %}
-						<a href="#">{{ project.latest.0.release.number }}</a>, {{ project.latest.0.release.dateTime }}
+						<a href="{{ project.latest.0.release|object_link }}">{{ project.latest.0.release.number }}</a>, {{ project.latest.0.release.dateTime }}
 					{% endif %}
 				</td>
 				<td>
-					<a href="#">{{ project.team.name }}</a>
+					<a href="{{ project.team|object_link }}">{{ project.team.name }}</a>
 				</td>
 				<td>
-					<a href="#">{{ project.team.leader }}</a>
+					<a href="{{ project.team.leader|object_link }}">{{ project.team.leader }}</a>
 				</td>
 			</tr>
 		{% endfor %}
