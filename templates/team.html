@@ -39,8 +39,10 @@
 		</table>
 	</div>
 
+	{% if isTeam %}
 	<button class="pull-right btn btn-default" data-toggle="modal" data-target="#form_overlay"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
 	{% include "form_overlay.html" %}
+	{% endif %}
 
 	<h2>Projects</h2>
 	{% include "projects_table.html" with projects=team.projects %}

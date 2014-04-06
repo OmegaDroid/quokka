@@ -23,3 +23,7 @@ def object_link(obj):
         return ("/"+type(obj).__name__+"/"+str(obj.id)+"/").lower()
     except:
         return ""
+
+@register.filter
+def object_anchor(obj):
+    return mark_safe("<a href='"+object_link(obj)+"'>"+str(obj)+"</a>")

@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from accounts.test.test_models import test_user
 
-from projects.models import Project, Team, Release
+from projects.models import Project, Team, Release, DEFAULT_TIME
 
 
 def test_team(leader: User=None, name: str="team", members: list=[], description: str="", img: str=None) -> Team:
@@ -94,7 +94,7 @@ def test_project(name: str="project", description: str="", team: Team=None, auth
     return p
 
 
-def test_release(number: str="1", project:Project=None, notes: str="notes", dateTime: datetime=timezone.now(), url: str="a.b.c", tags=[]) -> Release:
+def test_release(number: str="1", project:Project=None, notes: str="notes", dateTime: datetime=DEFAULT_TIME, url: str="a.b.c", tags=[]) -> Release:
     """
     Creates, saves and returns a Release obj.
 

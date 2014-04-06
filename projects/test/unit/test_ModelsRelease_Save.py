@@ -1,8 +1,10 @@
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 from django.test import TestCase
+from django.utils import timezone
 import accounts
 from accounts.test.test_models import test_user
-from projects.models import ResponseCodes
+from projects.models import ResponseCodes, DEFAULT_TIME
 from projects.test.test_models import test_release, test_project, test_team
 
 
@@ -98,3 +100,9 @@ class ModelsRelease_Save(TestCase):
         test_release(project=p, number="2")
 
         self.assertTrue(r.accepted)
+
+
+    def test_CreateRelease_ReleaseTimeIsUpdatedToTheCurrentTime(self):
+        r = test_release()
+
+        self.assertNotEqual(DEFAULT_TIME, r.dateTime)

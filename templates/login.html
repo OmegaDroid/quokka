@@ -19,10 +19,14 @@
 
 			<input class="btn btn-default" type="submit" value="login" />
 			<input type="hidden" name="next" value="{{ next }}" />
+
+
 		</form>
 
 		{% if form.errors %}
 		<p>Your username and password didn't match. Please try again.</p>
 		{% endif %}
+		<button class="btn btn-default" data-toggle="modal" data-target="#create_user_overlay"><span class="glyphicon glyphicon-plus"></span> Create User</button>
+		{% include "form_overlay.html" with overlayId="create_user_overlay" form="create_form" %}
 	</div>
 {% endblock %}

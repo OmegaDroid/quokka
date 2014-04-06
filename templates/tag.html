@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load utils %}
+
+{% block MainContent %}
+	<table class="table table-bordered table-striped">
+	<thead>
+        <tr>
+	        <td>Project</td>
+	        <td>Release</td>
+        </tr>
+    </thead>
+	<tbody>
+	{% for r in releases %}
+		<tr>
+			<td>{{ r.project|object_anchor }}</td>
+			<td>{{ r.release|object_anchor }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+{% endblock %}

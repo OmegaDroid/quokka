@@ -20,3 +20,6 @@ class ProjectsConfig(AppConfig):
 
         #register rejection of previous pending releases when new release is created
         post_save.connect(triggers.post_release_save_reject_pending_releases, sender=models.Release)
+
+        #register updating the creation time for a new release
+        post_save.connect(triggers.post_release_save_update_time, sender=models.Release)

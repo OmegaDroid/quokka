@@ -1,10 +1,14 @@
+from datetime import datetime
 from django.db import models
 from django.forms import ModelForm
+from django.utils import timezone
 from parsley.decorators import parsleyfy
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
 from accounts.models import User
+
+DEFAULT_TIME = timezone.make_aware(datetime(1970, 1, 1), timezone.get_current_timezone())
 
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name='+')
@@ -44,6 +48,12 @@ class Project(models.Model):
                     projectTags.append(t)
 
         return projectTags
+
+    def release_with_tag(self, tag):
+        withTag = self.releases.filter(tags__slug=tag)
+        if withTag:
+            return withTag[0]
+        return None
 
     @property
     def latest(self):
@@ -85,7 +95,7 @@ class Release(models.Model):
     number = models.CharField(max_length=20, unique=True)
     project = models.ForeignKey(Project)
     notes = models.TextField()
-    dateTime = models.DateTimeField()
+    dateTime = models.DateTimeField(default=DEFAULT_TIME)
     url = models.URLField()
     tags = TaggableManager()
 

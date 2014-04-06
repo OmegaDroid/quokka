@@ -3,8 +3,9 @@ from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResp
 from django.shortcuts import render_to_response
 
 # Create your views here.
-from django.template import RequestContext
+from django.template import RequestContext, Context
 from django.utils.timezone import now
+from taggit.models import Tag
 from accounts import emails
 from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm, \
     ResponseCodes, Team, TeamForm
@@ -52,9 +53,7 @@ def create_release(request):
     if request.POST:
         form = ReleaseForm(request.POST)
         if form.is_valid():
-            release = form.save(commit=False)
-            release.dateTime = now()
-            release.save()
+            release = form.save()
             return HttpResponseRedirect(object_link(release))
         else:
             return HttpResponseBadRequest()
@@ -114,7 +113,8 @@ def team(request, id):
         "title": t.name,
         "team": t,
         "formAction": "/edit_team/"+str(id)+"/",
-        "form": TeamForm(instance=t)
+        "form": TeamForm(instance=t),
+        "isTeam": request.user in t.members.all()
     }))
 
 
@@ -149,3 +149,18 @@ def edit_team(request, id):
             return HttpResponseBadRequest()
 
     return  HttpResponseNotAllowed(['POST'])
+
+
+def tag(request, id):
+    t = Tag.objects.get(id=id)
+    title = t.slug
+    releases = []
+    for p in Project.objects.all():
+        release = p.release_with_tag(t)
+        if release:
+            releases.append({"project": p, "release": release})
+
+    return render_to_response("tag.html", {
+        "title": title,
+        "releases": releases
+    })

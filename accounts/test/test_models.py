@@ -4,11 +4,11 @@ A set of functions to produce model instances for test.
 These allow us to change models and not break tests.
 """
 from datetime import datetime
-from django.utils import timezone
 from django.contrib.auth.models import User
+from projects.models import DEFAULT_TIME
 
 
-def test_user(username:str="user", first_name:str="", last_name:str="", email:str="", is_staff:bool=True, is_active:bool=True, date_joined: datetime=timezone.now()) -> User:
+def test_user(username:str="user", first_name:str="", last_name:str="", email:str="", is_staff:bool=True, is_active:bool=True, date_joined: datetime=DEFAULT_TIME) -> User:
     """
     Creates, saves and returns a User obj.
 
