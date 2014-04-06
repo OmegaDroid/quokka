@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from django.conf.global_settings import MEDIA_ROOT
+import sys
+
+import socket
+
+try:
+    HOSTNAME = socket.gethostname()
+except:
+    HOSTNAME = 'localhost'
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -31,6 +39,12 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+PROJECT_APPS = (
+    'projects',
+    'accounts',
+    'utils',
+)
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,10 +54,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'widget_tweaks',
     'parsley',
-    'projects',
-    'accounts',
-    'utils',
-)
+    'taggit',
+)+PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,13 +73,20 @@ WSGI_APPLICATION = 'badger.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if 'test' not in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
@@ -99,3 +118,5 @@ TEMPLATE_DIRS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 AUTH_PROFILE_MODULE = "projects.UserProfile"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

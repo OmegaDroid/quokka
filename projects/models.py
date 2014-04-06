@@ -1,15 +1,9 @@
 from django.db import models
 from django.forms import ModelForm
 from parsley.decorators import parsleyfy
+from taggit.managers import TaggableManager
 
 from accounts.models import User
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=20, unique=True)
-
-    def __str__(self):
-        return self.name
 
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name='+')
@@ -25,9 +19,11 @@ class Team(models.Model):
     def projects(self):
         return Project.objects.filter(team=self)
 
+
 class TeamForm(ModelForm):
     class Meta:
         model = Team
+
 
 class Project(models.Model):
     name = models.CharField(max_length=20, unique=True)
@@ -39,15 +35,17 @@ class Project(models.Model):
 
     @property
     def latest(self):
-        tagged = []
-        if self.releases:
-            tagged.append({"tag": None, "release": self.releases[0]})
-        for tag in Tag.objects.all().order_by("name"):
-            forTag = Release.objects.filter(project=self, tag=tag).order_by("-dateTime")
-            if forTag:
-                tagged.append({"tag": tag, "release": forTag[0]})
+        return []
+        # tagged = []
+        # if self.releases:
+        #     tagged.append({"tag": None, "release": self.releases[0]})
+        # for tag in Tag.objects.all().order_by("name"):
+        #     forTag = Release.objects.filter(project=self, tag=tag).order_by("-dateTime")
+        #     if forTag:
+        #         tagged.append({"tag": tag, "release": forTag[0]})
+        #
+        # return tagged
 
-        return tagged
     @property
     def releases(self):
         return Release.objects.filter(project=self).order_by("-dateTime")
@@ -62,16 +60,21 @@ class ProjectForm(ModelForm):
         model = Project
         exclude = []
 
+
 class Release(models.Model):
     number = models.CharField(max_length=20, unique=True)
     project = models.ForeignKey(Project)
     notes = models.TextField()
     dateTime = models.DateTimeField()
     url = models.URLField()
-    tag = models.ManyToManyField(Tag, null=True, blank=True)
+    tags = TaggableManager()
 
     def __str__(self):
         return self.number
+
+    def create_responses(self):
+        for auth in self.project.authorisers.all():
+            Response(release=self, user=auth).save()
 
     def active_user_response_object(self, user):
         responses = Response.objects.filter(release=self, response=ResponseCodes.Pending)
@@ -123,17 +126,19 @@ class ReleaseForm(ModelForm):
         model = Release
         exclude = ['dateTime']
 
+
 class ResponseCodes():
     Pending = 0
     Accept = 1
     Reject = 2
+
 
 class Response(models.Model):
     response = models.IntegerField(choices=(
         (ResponseCodes.Pending, "Pending"),
         (ResponseCodes.Accept, "Accept"),
         (ResponseCodes.Reject, "Reject"),
-    ), default=0)
+    ), default=ResponseCodes.Pending)
 
     release = models.ForeignKey(Release)
     reason = models.TextField(null=True, blank=True)
@@ -142,12 +147,15 @@ class Response(models.Model):
     class Meta:
         unique_together = (("release", "user"),)
 
+
 @parsleyfy
 class AcceptResponseForm(ModelForm):
     message = "Accept the release?"
+
     class Meta:
         model = Response
         exclude = ['reason', 'response', 'release', 'user']
+
 
 @parsleyfy
 class RejectResponseForm(ModelForm):

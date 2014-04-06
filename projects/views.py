@@ -45,18 +45,6 @@ def project(request, id):
         "formAction": "/create_release/"
     }))
 
-
-def create_response(hostname, release, auth):
-    response = Response(release=release, user=auth)
-    response.save()
-    emails.new_release_auth(hostname, response)
-
-
-def create_responses(hostname, elem):
-    for auth in elem.project.authorisers.all():
-        create_response(hostname, elem, auth)
-
-
 @login_required
 def create_release(request):
     if request.POST:
@@ -65,8 +53,6 @@ def create_release(request):
             release = form.save(commit=False)
             release.dateTime = now()
             release.save()
-            create_responses(request.META["HTTP_HOST"], release)
-            emails.new_release_team(request.META["HTTP_HOST"], release)
             return HttpResponseRedirect(object_link(release))
         else:
             return HttpResponseBadRequest()
