@@ -2,6 +2,7 @@ from django.db import models
 from django.forms import ModelForm
 from parsley.decorators import parsleyfy
 from taggit.managers import TaggableManager
+from taggit.models import Tag
 
 from accounts.models import User
 
@@ -23,6 +24,7 @@ class Team(models.Model):
 class TeamForm(ModelForm):
     class Meta:
         model = Team
+        exclude = []
 
 
 class Project(models.Model):
@@ -34,21 +36,35 @@ class Project(models.Model):
     img = models.ImageField(null=True, blank=True)
 
     @property
+    def tags(self):
+        projectTags = []
+        for ts in Release.objects.values_list("tags").filter(project=self):
+            for t in ts:
+                if t not in projectTags:
+                    projectTags.append(t)
+
+        return projectTags
+
+    @property
     def latest(self):
-        return []
-        # tagged = []
-        # if self.releases:
-        #     tagged.append({"tag": None, "release": self.releases[0]})
-        # for tag in Tag.objects.all().order_by("name"):
-        #     forTag = Release.objects.filter(project=self, tag=tag).order_by("-dateTime")
-        #     if forTag:
-        #         tagged.append({"tag": tag, "release": forTag[0]})
-        #
-        # return tagged
+        tagged = []
+        if self.accepted_releases:
+            tagged.append({"tag": None, "release": self.accepted_releases[0]})
+        for tag in Tag.objects.all():
+
+            forTag = [r for r in Release.objects.filter(project=self, tags__slug=tag).order_by("-dateTime") if r.accepted]
+            if forTag:
+                tagged.append({"tag": tag, "release": forTag[0]})
+
+        return tagged
 
     @property
     def releases(self):
         return Release.objects.filter(project=self).order_by("-dateTime")
+
+    @property
+    def accepted_releases(self):
+        return [r for r in Release.objects.filter(project=self).order_by("-dateTime") if r.accepted]
 
     def __str__(self):
         return self.name

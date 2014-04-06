@@ -47,6 +47,8 @@ def test_team(leader: User=None, name: str="team", members: list=[], description
 
     for m in members:
         t.members.add(m)
+
+    t.save()
     return t
 
 
@@ -88,10 +90,11 @@ def test_project(name: str="project", description: str="", team: Team=None, auth
     for s in subscribers:
         p.subscribers.add(s)
 
+    p.save()
     return p
 
 
-def test_release(number: str="1", project:Project=None, notes: str="notes", dateTime: datetime=timezone.now(), url: str="a.b.c") -> Release:
+def test_release(number: str="1", project:Project=None, notes: str="notes", dateTime: datetime=timezone.now(), url: str="a.b.c", tags=[]) -> Release:
     """
     Creates, saves and returns a Release obj.
 
@@ -113,6 +116,10 @@ def test_release(number: str="1", project:Project=None, notes: str="notes", date
         dateTime=dateTime,
         url=url
     )
+    r.save()
+
+    for tag in tags:
+        r.tags.add(tag)
 
     r.save()
     return r
