@@ -66,6 +66,10 @@ class Project(models.Model):
     def accepted_releases(self):
         return [r for r in Release.objects.filter(project=self).order_by("-dateTime") if r.accepted]
 
+    @property
+    def pending_releases(self):
+        return [r for r in Release.objects.filter(project=self).order_by("-dateTime") if r.pending]
+
     def __str__(self):
         return self.name
 
@@ -134,6 +138,13 @@ class Release(models.Model):
                 return releases
             else:
                 releases.append(release)
+
+    def reject_previous_pending(self):
+        pending = [r for r in self.project.pending_releases if not r == self]
+        for p in pending:
+            for response in p.responses:
+                response.response = ResponseCodes.Reject
+                response.save()
 
 
 @parsleyfy

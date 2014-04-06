@@ -42,7 +42,9 @@ def project(request, id):
         "title": p.name,
         "project": p,
         "form": form,
-        "formAction": "/create_release/"
+        "formAction": "/create_release/",
+        "isTeam": request.user in p.team.members.all(),
+        "isAuth": request.user in p.authorisers.all()
     }))
 
 @login_required

@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 from django.test import TestCase
 import accounts
 from accounts.test.test_models import test_user
+from projects.models import ResponseCodes
 from projects.test.test_models import test_release, test_project, test_team
 
 
@@ -77,3 +78,23 @@ class ModelsRelease_Save(TestCase):
             r.save()
 
             self.assertFalse(accounts.emails.new_release_team.called)
+
+
+    def test_CreateRelease_PreviousPendingReleasesAreRejected(self):
+        p = test_project()
+        r = test_release(project=p)
+        test_release(project=p, number="2")
+
+        self.assertTrue(r.rejected)
+
+
+    def test_CreateRelease_PreviousAcceptedReleasesAreUnaffected(self):
+        p = test_project()
+        r = test_release(project=p)
+        for res in r.responses:
+            res.response = ResponseCodes.Accept
+            res.save()
+
+        test_release(project=p, number="2")
+
+        self.assertTrue(r.accepted)

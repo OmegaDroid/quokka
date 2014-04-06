@@ -41,6 +41,12 @@
 					</table>
 				</td>
 			</tr>
+			{% if isTeam or isAuth %}
+			<tr>
+				<td><strong>Pending Release:</strong></td>
+				<td><a href="{{ project.pending_releases.0|object_link }}">{{ project.pending_releases.0 }}</a></td>
+			</tr>
+			{% endif %}
 			<tr>
 				<td><strong>Current Releases:</strong></td>
 				<td>
@@ -92,7 +98,9 @@
 	</div>
 	</div>
 
+	{% if isTeam %}
 	<button class="pull-right btn btn-default" data-toggle="modal" data-target="#form_overlay"><span class="glyphicon glyphicon-plus"></span> New Release</button>
 
 	{% include "form_overlay.html" %}
+	{% endif %}
 {% endblock %}
