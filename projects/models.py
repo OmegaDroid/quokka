@@ -143,11 +143,14 @@ class Release(models.Model):
     @property
     def since_last_accepted(self):
         releases = [self]
+
         for release in Release.objects.filter(id__lt=self.id).order_by("-id"):
             if release.accepted:
                 return releases
             else:
                 releases.append(release)
+
+        return releases
 
     def reject_previous_pending(self):
         pending = [r for r in self.project.pending_releases if not r == self]
