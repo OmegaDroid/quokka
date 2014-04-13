@@ -1,31 +1,7 @@
-{% load widget_tweaks %}
-
 <div class="modal fade" tabindex="-1" id="{% if overlayId %}{{ overlayId }}{% else %}form_overlay{% endif %}">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form data-parsley-validate action="{{ formAction }}" method="post">{% csrf_token %}
-				<div class="modal-body">
-					{% if form.message %}{{ form.message }}{% endif %}
-					{% for field in form.visible_fields %}
-						<div class="form-group{% if field.errors %} has-error{% endif %}"
-							{{ field.label_tag }}
-							{% if field|field_type == "textfield" or field|field_type == "manytomanyfield" %}
-								<br/>
-							{% endif %}
-				            {{ field|add_class:"form-control" }}
-				            {{ field.errors }}
-						</div>
-					{% endfor %}
-					{% for field in form.hidden_fields %}
-						{{ field }}
-					{% endfor %}
-				</div>
-				<div class="modal-footer">
-	                <input type='submit' value='Submit' class='btn btn-default pull-right' />
-				</div>
-			</form>
-
-
+			{% include "form.html" %}
 	    </div>
 	</div>
 </div>

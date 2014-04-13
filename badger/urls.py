@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from accounts.models import UserForm
 
 urlpatterns = patterns('',
     # Examples:
@@ -9,10 +8,10 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html', "context":{"create_form": UserForm()}}),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/projects/'}),
     url(r'^user/(\d+)/', 'accounts.views.user'),
-    url(r'^accounts/create/$', 'accounts.views.create'),
+    url(r'^accounts/create', 'accounts.views.create_user'),
 
     url(r'^projects/$', 'projects.views.projects'),
     url(r'^create_project/$', 'projects.views.create_project'),

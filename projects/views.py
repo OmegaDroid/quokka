@@ -3,11 +3,9 @@ from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResp
 from django.shortcuts import render_to_response
 
 # Create your views here.
-from django.template import RequestContext, Context
-from django.utils.timezone import now
+from django.template import RequestContext
 from taggit.models import Tag
-from accounts import emails
-from projects.models import ProjectForm, Project, ReleaseForm, Release, Response, AcceptResponseForm, RejectResponseForm, \
+from projects.models import ProjectForm, Project, ReleaseForm, Release, AcceptResponseForm, RejectResponseForm, \
     ResponseCodes, Team, TeamForm
 from utils.templatetags.utils import object_link
 
