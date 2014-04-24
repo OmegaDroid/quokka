@@ -1,11 +1,11 @@
 import os
-import smtplib
-from email.mime.text import MIMEText
 from django.core.mail import send_mail
 from django.template import Template, Context
-from badger.settings import HOSTNAME
 
-SERVER_EMAIL = "no-reply@badger.com"
+from quokka.settings import HOSTNAME
+
+
+SERVER_EMAIL = "no-reply@quokka.com"
 
 
 def new_release_auth(release):

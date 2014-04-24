@@ -1,5 +1,5 @@
 """
-Django settings for badger project.
+Django settings for quokka project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/dev/topics/settings/
@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from django.conf.global_settings import MEDIA_ROOT
 import sys
 
 import socket
@@ -66,9 +65,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'badger.urls'
+ROOT_URLCONF = 'quokka.urls'
 
-WSGI_APPLICATION = 'badger.wsgi.application'
+WSGI_APPLICATION = 'quokka.wsgi.application'
 
 
 # Database
