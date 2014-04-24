@@ -13,6 +13,7 @@ import os
 import sys
 
 import socket
+from django_cookbook.security import generate_secret_key
 
 try:
     HOSTNAME = socket.gethostname()
@@ -26,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!j!rcmgm!@*zhjkq)3tl*r&&zug3&4hklo*s)#b*5_-=u0s1iw'
+SECRET_KEY = generate_secret_key(BASE_DIR)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

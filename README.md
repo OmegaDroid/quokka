@@ -8,5 +8,7 @@ This is a system for controlling releases. It allows for any member of the team 
 Requirements
 ============
 
-Quokka requires Django 1.7+, this cn be obtained here 'https://www.djangoproject.com/download/1.7b2/tarball/'.
+Quokka requires Django 1.7+, this can be obtained here 'https://www.djangoproject.com/download/1.7b2/tarball/'.
+
+It also requires django_cookbook which can obtained here 'https://github.com/OmegaDroid/django_cookbook'
 
