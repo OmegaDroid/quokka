@@ -34,9 +34,9 @@ class TeamForm(ModelForm):
 class Project(models.Model):
     name = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True, null=True)
-    team = models.ForeignKey(Team, null=True, blank=True)
+    team = models.ForeignKey(Team)
     authorisers = models.ManyToManyField(User)
-    subscribers = models.ManyToManyField(User, related_name='+')
+    subscribers = models.ManyToManyField(User, related_name='+', null=True, blank=True)
     img = models.ImageField(null=True, blank=True)
 
     @property
@@ -97,7 +97,7 @@ class Release(models.Model):
     notes = models.TextField()
     dateTime = models.DateTimeField(default=DEFAULT_TIME)
     url = models.URLField()
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return self.number
