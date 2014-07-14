@@ -5,8 +5,7 @@ from django.shortcuts import render_to_response
 # Create your views here.
 from django.template import RequestContext
 from taggit.models import Tag
-from projects.models import ProjectForm, Project, ReleaseForm, Release, AcceptResponseForm, RejectResponseForm, \
-    ResponseCodes, Team, TeamForm
+from projects.models import ProjectForm, Project, ReleaseForm, Release, AcceptResponseForm, RejectResponseForm, ResponseCodes, Team, TeamForm
 from utils.templatetags.utils import object_link
 
 
@@ -30,13 +29,13 @@ def create_project(request):
         else:
             return HttpResponseBadRequest()
 
-    return  HttpResponseNotAllowed(['POST'])
+    return HttpResponseNotAllowed(['POST'])
 
 
 @login_required
 def project(request, id):
     p = Project.objects.get(id=id)
-    form = ReleaseForm(initial={'project':p})
+    form = ReleaseForm(initial={'project': p})
     return render_to_response("project.html", RequestContext(request, {
         "title": p.name,
         "project": p,
@@ -45,6 +44,7 @@ def project(request, id):
         "isTeam": request.user in p.team.members.all(),
         "isAuth": request.user in p.authorisers.all()
     }))
+
 
 @login_required
 def create_release(request):
@@ -63,8 +63,8 @@ def create_release(request):
 def release(request, id):
     r = Release.objects.get(id=id)
     userResponse = r.active_user_response_object(request.user)
-    return render_to_response("release.html",  RequestContext(request, {
-        "title": r.project.name+", "+r.number,
+    return render_to_response("release.html", RequestContext(request, {
+        "title": r.project.name + ", " + r.number,
         "release": r,
         "userResponse": userResponse,
         "acceptForm": AcceptResponseForm(instance=userResponse),
@@ -97,7 +97,7 @@ def reject_release(request, id):
             response = form.save(commit=False)
             response.response = ResponseCodes.Reject
             response.save()
-            return HttpResponseRedirect("/release/"+str(response.release.id)+"/")
+            return HttpResponseRedirect("/release/" + str(response.release.id) + "/")
         else:
             return HttpResponseBadRequest()
 
@@ -107,10 +107,10 @@ def reject_release(request, id):
 @login_required
 def team(request, id):
     t = Team.objects.get(id=id)
-    return render_to_response("team.html", RequestContext(request,{
+    return render_to_response("team.html", RequestContext(request, {
         "title": t.name,
         "team": t,
-        "formAction": "/edit_team/"+str(id)+"/",
+        "formAction": "/edit_team/" + str(id) + "/",
         "form": TeamForm(instance=t),
         "isTeam": request.user in t.members.all()
     }))
@@ -118,12 +118,13 @@ def team(request, id):
 
 @login_required
 def teams(request):
-    return render_to_response('teams.html', RequestContext(request,{
+    return render_to_response('teams.html', RequestContext(request, {
         "title": "Teams",
         "teams": Team.objects.all(),
         "form": TeamForm(initial={"leader": request.user}),
         "formAction": "/create_team/"
     }))
+
 
 def create_team(request):
     if request.POST:
@@ -134,7 +135,8 @@ def create_team(request):
         else:
             return HttpResponseBadRequest()
 
-    return  HttpResponseNotAllowed(['POST'])
+    return HttpResponseNotAllowed(['POST'])
+
 
 def edit_team(request, id):
     if request.POST:
@@ -146,7 +148,7 @@ def edit_team(request, id):
         else:
             return HttpResponseBadRequest()
 
-    return  HttpResponseNotAllowed(['POST'])
+    return HttpResponseNotAllowed(['POST'])
 
 
 def tag(request, id):
@@ -154,9 +156,9 @@ def tag(request, id):
     title = t.slug
     releases = []
     for p in Project.objects.all():
-        release = p.release_with_tag(t)
-        if release:
-            releases.append({"project": p, "release": release})
+        tagged_release = p.release_with_tag(t)
+        if tagged_release:
+            releases.append({"project": p, "release": tagged_release})
 
     return render_to_response("tag.html", {
         "title": title,

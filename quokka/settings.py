@@ -36,7 +36,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 PROJECT_APPS = (
@@ -55,7 +54,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'parsley',
     'taggit',
-)+PROJECT_APPS
+) + PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,7 +68,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'quokka.urls'
 
 WSGI_APPLICATION = 'quokka.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases

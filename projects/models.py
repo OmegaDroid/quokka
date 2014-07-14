@@ -10,6 +10,7 @@ from accounts.models import User
 
 DEFAULT_TIME = timezone.make_aware(datetime(1970, 1, 1), timezone.get_current_timezone())
 
+
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name='+')
     name = models.CharField(max_length=20, unique=True)

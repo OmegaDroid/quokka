@@ -11,13 +11,11 @@ class ModelsProject_Latest(TestCase):
 
         self.assertEqual(0, len(p.latest))
 
-
     def test_OnlyReleaseIsPending_LatestIsEmpty(self):
         p = test_project()
         r = test_release(project=p)
 
         self.assertEqual(0, len(p.latest))
-
 
     def test_OnlyOneAcceptedReleaseWithNoTag_LatestHasOneRelease(self):
         p = test_project()
@@ -28,7 +26,6 @@ class ModelsProject_Latest(TestCase):
 
         self.assertEqual(1, len(p.latest))
         self.assertEqual(r, p.latest[0]["release"])
-
 
     def test_OnlyOneAcceptedReleaseWithTag_LatestHasTwoReleasesOneWithTheTag(self):
         p = test_project()
@@ -43,7 +40,6 @@ class ModelsProject_Latest(TestCase):
         self.assertEqual(r, p.latest[1]["release"])
         self.assertEqual("test", p.latest[1]["tag"].slug)
 
-
     def test_TwoAcceptedReleaseOneWithTag_LatestHasTwoReleasesOneWithTheTag(self):
         p = test_project()
         r1 = test_release(project=p, dateTime=timezone.make_aware(datetime(1970, 1, 1), timezone.get_current_timezone()))
@@ -57,12 +53,10 @@ class ModelsProject_Latest(TestCase):
             response.response = ResponseCodes.Accept
             response.save()
 
-
         self.assertEqual(2, len(p.latest))
         self.assertEqual(r2, p.latest[0]["release"])
         self.assertEqual(r1, p.latest[1]["release"])
         self.assertEqual("test", p.latest[1]["tag"].slug)
-
 
     def test_TwoAcceptedReleaseOneWithTagOnePendingRelease_LatestHasTwoReleasesOneWithTheTag(self):
         p = test_project()
@@ -84,7 +78,6 @@ class ModelsProject_Latest(TestCase):
         self.assertEqual(r1, p.latest[1]["release"])
         self.assertEqual("test", p.latest[1]["tag"].slug)
 
-
     def test_TwoAcceptedReleaseOneWithTagOnePendingReleaseWithTheSameTag_LatestHasTwoReleasesOneWithTheTag(self):
         p = test_project()
         r1 = test_release(project=p, dateTime=timezone.make_aware(datetime(1970, 1, 1), timezone.get_current_timezone()))
@@ -99,7 +92,6 @@ class ModelsProject_Latest(TestCase):
             response.save()
 
         test_release(project=p, number="pendingnumber", dateTime=timezone.make_aware(datetime(1970, 1, 3), timezone.get_current_timezone()), tags=["test"])
-
 
         self.assertEqual(2, len(p.latest))
         self.assertEqual(r2, p.latest[0]["release"])

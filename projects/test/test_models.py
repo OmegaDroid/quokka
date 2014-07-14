@@ -82,7 +82,7 @@ def test_project(name: str="project", description: str="", team: Team=None, auth
     p.save()
 
     if not authorisers:
-        authorisers=[team.leader]
+        authorisers = [team.leader]
 
     for a in authorisers:
         p.authorisers.add(a)
@@ -94,7 +94,7 @@ def test_project(name: str="project", description: str="", team: Team=None, auth
     return p
 
 
-def test_release(number: str="1", project:Project=None, notes: str="notes", dateTime: datetime=DEFAULT_TIME, url: str="a.b.c", tags=[]) -> Release:
+def test_release(number: str="1", project: Project=None, notes: str="notes", dateTime: datetime=DEFAULT_TIME, url: str="a.b.c", tags=None) -> Release:
     """
     Creates, saves and returns a Release obj.
 
@@ -106,6 +106,9 @@ def test_release(number: str="1", project:Project=None, notes: str="notes", date
 
     :return: The generated Release object
     """
+    if not tags:
+        tags = []
+
     if not project:
         project = test_project()
 

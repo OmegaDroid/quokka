@@ -10,7 +10,7 @@ class UserProfile(models.Model):
 
     @property
     def name(self):
-        return self.firstName+" "+self.lastName
+        return self.firstName + " " + self.lastName
 
     def __str__(self):
         return self.name
@@ -34,4 +34,3 @@ class NewUserForm(UserCreationForm):
         if commit:
             user.save()
         return user
-

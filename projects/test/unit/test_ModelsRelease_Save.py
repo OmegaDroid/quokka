@@ -33,7 +33,6 @@ class ModelsRelease_Save(TestCase):
 
         self.assertEqual(origResponses, newReleases)
 
-
     def test_CreateRelease_NewReleaseAuthIsCalled(self):
         with patch("accounts.emails.new_release_auth", MagicMock()):
             u1 = test_user(username="auth1")
@@ -42,7 +41,6 @@ class ModelsRelease_Save(TestCase):
             r = test_release(project=p)
 
             accounts.emails.new_release_auth.assert_called_once_with(r)
-
 
     def test_NotRelease_NewReleaseAuthIsNotCalled(self):
         u1 = test_user(username="auth1")
@@ -56,7 +54,6 @@ class ModelsRelease_Save(TestCase):
 
             self.assertFalse(accounts.emails.new_release_auth.called)
 
-
     def test_CreateRelease_NewReleaseTeamIsCalled(self):
         with patch("accounts.emails.new_release_team", MagicMock()):
             u1 = test_user(username="member1")
@@ -66,7 +63,6 @@ class ModelsRelease_Save(TestCase):
             r = test_release(project=p)
 
             accounts.emails.new_release_team.assert_called_once_with(r)
-
 
     def test_UpdateRelease_NewReleaseTeamIsCalled(self):
         u1 = test_user(username="member1")
@@ -81,14 +77,12 @@ class ModelsRelease_Save(TestCase):
 
             self.assertFalse(accounts.emails.new_release_team.called)
 
-
     def test_CreateRelease_PreviousPendingReleasesAreRejected(self):
         p = test_project()
         r = test_release(project=p)
         test_release(project=p, number="2")
 
         self.assertTrue(r.rejected)
-
 
     def test_CreateRelease_PreviousAcceptedReleasesAreUnaffected(self):
         p = test_project()
@@ -100,7 +94,6 @@ class ModelsRelease_Save(TestCase):
         test_release(project=p, number="2")
 
         self.assertTrue(r.accepted)
-
 
     def test_CreateRelease_ReleaseTimeIsUpdatedToTheCurrentTime(self):
         r = test_release()

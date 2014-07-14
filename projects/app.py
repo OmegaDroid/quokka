@@ -6,20 +6,20 @@ from projects import triggers
 
 
 class ProjectsConfig(AppConfig):
-    name="projects"
+    name = "projects"
 
     def ready(self):
-        #register creation of responses on release being created
+        # register creation of responses on release being created
         post_save.connect(triggers.post_release_save_create_responses, sender=models.Release)
 
-        #register emailing authorisers on release being created
+        # register emailing authorisers on release being created
         post_save.connect(triggers.post_release_save_new_release_auth_emails, sender=models.Release)
 
-        #register emailing team members on release being created
+        # register emailing team members on release being created
         post_save.connect(triggers.post_release_save_new_release_team_emails, sender=models.Release)
 
-        #register rejection of previous pending releases when new release is created
+        # register rejection of previous pending releases when new release is created
         post_save.connect(triggers.post_release_save_reject_pending_releases, sender=models.Release)
 
-        #register updating the creation time for a new release
+        # register updating the creation time for a new release
         post_save.connect(triggers.post_release_save_update_time, sender=models.Release)
