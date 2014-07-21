@@ -42,13 +42,7 @@ class Project(models.Model):
 
     @property
     def tags(self):
-        projectTags = []
-        for ts in Release.objects.values_list("tags").filter(project=self):
-            for t in ts:
-                if t not in projectTags:
-                    projectTags.append(t)
-
-        return projectTags
+        return set(Release.objects.values_list("tags", flat=True).filter(project=self))
 
     def release_with_tag(self, tag):
         withTag = self.releases.filter(tags__slug=tag)
