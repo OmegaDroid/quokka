@@ -51,8 +51,8 @@ class Project(models.Model):
         tagged = []
         if self.accepted_releases:
             tagged.append({"tag": None, "release": self.accepted_releases[0]})
-        for tag in Tag.objects.all():
 
+        for tag in Tag.objects.all():
             forTag = [r for r in Release.objects.filter(project=self, tags__slug=tag).order_by("-dateTime") if r.accepted]
             if forTag:
                 tagged.append({"tag": tag, "release": forTag[0]})
@@ -83,12 +83,15 @@ class ProjectForm(ModelForm):
 
 
 class Release(models.Model):
-    number = models.CharField(max_length=20, unique=True)
+    number = models.CharField(max_length=20)
     project = models.ForeignKey(Project)
     notes = models.TextField()
     dateTime = models.DateTimeField(default=DEFAULT_TIME)
     url = models.URLField()
     tags = TaggableManager(blank=True)
+
+    class Meta:
+        unique_together = (("project", "number"), )
 
     def __str__(self):
         return self.number
