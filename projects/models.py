@@ -40,10 +40,6 @@ class Project(models.Model):
     subscribers = models.ManyToManyField(User, related_name='+', null=True, blank=True)
     img = models.ImageField(null=True, blank=True)
 
-    @property
-    def tags(self):
-        return set(Release.objects.values_list("tags", flat=True).filter(project=self))
-
     def release_with_tag(self, tag):
         withTag = self.releases.filter(tags__slug=tag)
         if withTag:
